@@ -4,7 +4,17 @@
 
 import Foundation
 
+import Rainbow
+
 class Runner {
+    struct Error: Swift.Error, CustomStringConvertible {
+        let statusCode: Int32
+
+        var description: String {
+            return "Status code \(self.statusCode)"
+        }
+    }
+
     let directoryURL: URL
     let configuration: Configuration
     private let queue: DispatchQueue = .init(label: "swift-watch")
@@ -15,42 +25,42 @@ class Runner {
         self.configuration = configuration
     }
 
-    func run() {
+    func run() throws {
         self.running = true
         defer { self.running = false }
-        for command in self.configuration.swiftCommands {
-            let command = "swift " + command
-            print("Running program: $ \(command).\n")
-            var statusCode: Int32 = 0
-            self.queue.sync {
-                if self.configuration.dryRun {
-                    statusCode = 0
-                } else {
-                    statusCode = Process.execute(command: command)
-                }
+        do {
+            print("Running...\n")
+            for command in self.configuration.swiftCommands {
+                try self.run(command: "swift " + command)
+                self.delay()
             }
-            print("Program ended with exit code: \(statusCode)\n")
-            guard statusCode == 0 else {
-                return
+            for command in self.configuration.shellCommands {
+                try self.run(command: command)
+                self.delay()
             }
-            self.delay()
+            let result = "success".onGreen
+            print("Finished running with \(result).".lightGreen)
+        } catch {
+            let result = "failure".onRed
+            print("Finished running with \(result).".lightRed)
         }
-        for command in self.configuration.shellCommands {
-            let command = command
-            print("Running program: $ \(command).\n")
-            var statusCode: Int32 = 0
-            self.queue.sync {
-                if self.configuration.dryRun {
-                    statusCode = 0
-                } else {
-                    statusCode = Process.execute(command: command)
-                }
+    }
+
+    private func run(command: String) throws {
+        var statusCode: Int32 = 0
+        print("Running program: $ \(command.onBlue).\n".lightBlue)
+        self.queue.sync {
+            if self.configuration.dryRun {
+                statusCode = 0
+            } else {
+                statusCode = Process.execute(command: command)
             }
-            print("Program ended with exit code: \(statusCode)\n")
-            guard statusCode == 0 else {
-                return
-            }
-            self.delay()
+        }
+        print("Program ended with success.\n".lightGreen)
+        guard statusCode == 0 else {
+            let error = Error(statusCode: statusCode)
+            print("Program ended with error: \(error.description.onRed).\n".lightRed)
+            throw error
         }
     }
 

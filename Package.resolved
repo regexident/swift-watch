@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "Rainbow",
+        "repositoryURL": "https://github.com/onevcat/Rainbow",
+        "state": {
+          "branch": null,
+          "revision": "5d5e3d3facd3a46edc260c383f15261b07abcf98",
+          "version": "3.0.1"
+        }
+      },
+      {
         "package": "SKQueue",
         "repositoryURL": "https://github.com/daniel-pedersen/SKQueue.git",
         "state": {
