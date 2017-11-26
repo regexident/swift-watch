@@ -8,12 +8,21 @@ import CommandCougar
 
 struct Configuration {
     let dryRun: Bool
-    let swiftCommands: [String]
-    let shellCommands: [String]
+    let quiet: Bool
+    let monochrome: Bool
+    let tasks: [Task]
 
     static let dryRunOption = Option(
         flag: .both(short: "d", long: "dry-run"),
         overview: "Do not run any commands, just print them"
+    )
+    static let quietOption = Option(
+        flag: .both(short: "q", long: "quiet"),
+        overview: "Suppress output from swift-watch itself"
+    )
+    static let monochromeOption = Option(
+        flag: .both(short: "m", long: "monochrome"),
+        overview: "Suppress coloring of output from swift-watch itself"
     )
     static let swiftOption = Option(
         flag: .both(short: "x", long: "exec"),
@@ -30,15 +39,27 @@ struct Configuration {
 extension Configuration {
     init(evaluation: CommandEvaluation) throws {
         let options = evaluation.options
-
         let dryRun = options.contains { $0.flag == Configuration.dryRunOption.flag }
-        let swiftCommands = options.filter { $0.flag == Configuration.swiftOption.flag }.flatMap { $0.parameter }
-        let shellCommands = options.filter { $0.flag == Configuration.shellOption.flag }.flatMap { $0.parameter }
-
+        let quiet = options.contains { $0.flag == Configuration.quietOption.flag }
+        let monochrome = options.contains { $0.flag == Configuration.monochromeOption.flag }
+        let tasks: [Task] = options.flatMap {
+            guard case let (flag, parameter?) = ($0.flag, $0.parameter) else {
+                return nil
+            }
+            switch flag {
+            case Configuration.swiftOption.flag:
+                return .swift(parameter)
+            case Configuration.shellOption.flag:
+                return .shell(parameter)
+            case _:
+                return nil
+            }
+        }
         self.init(
             dryRun: dryRun,
-            swiftCommands: swiftCommands,
-            shellCommands: shellCommands
+            quiet: quiet,
+            monochrome: monochrome,
+            tasks: tasks
         )
     }
 }

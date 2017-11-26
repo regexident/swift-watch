@@ -7,64 +7,66 @@ import Foundation
 import Rainbow
 
 class Runner {
-    struct Error: Swift.Error, CustomStringConvertible {
-        let statusCode: Int32
-
-        var description: String {
-            return "Status code \(self.statusCode)"
-        }
-    }
-
     let directoryURL: URL
     let configuration: Configuration
     private let queue: DispatchQueue = .init(label: "swift-watch")
     private var running: Bool = false
 
-    init(directoryURL: URL, configuration: Configuration) {
+    let observers: [RunnerObserver]
+
+    init(directoryURL: URL, configuration: Configuration, observers: [RunnerObserver]) {
         self.directoryURL = directoryURL
         self.configuration = configuration
+        self.observers = observers
     }
 
-    func run() throws {
+    func run(taskSuite: TaskSuite) -> TaskSuiteReport {
         self.running = true
         defer { self.running = false }
-        do {
-            print("Running...\n")
-            for command in self.configuration.swiftCommands {
-                try self.run(command: "swift " + command)
-                self.delay()
+        var report = TaskSuiteReport(taskSuite: taskSuite, result: .success)
+        self.broadcast(event: .enteredTaskSuite(taskSuite))
+        for task in taskSuite.tasks {
+            let taskResult = self.run(task: task).result
+            if case .failure(_) = taskResult {
+                report = TaskSuiteReport(taskSuite: taskSuite, result: taskResult)
+                break
             }
-            for command in self.configuration.shellCommands {
-                try self.run(command: command)
-                self.delay()
-            }
-            let result = "success".onGreen
-            print("Finished running with \(result).".lightGreen)
-        } catch {
-            let result = "failure".onRed
-            print("Finished running with \(result).".lightRed)
+            self.delay()
         }
+        self.broadcast(event: .exitedTaskSuite(report))
+        return report
     }
 
-    private func run(command: String) throws {
+    private func run(task: Task) -> TaskReport {
         var statusCode: Int32 = 0
-        print("Running program: $ \(command.onBlue).\n".lightBlue)
+        self.broadcast(event: .enteredTask(task))
         self.queue.sync {
             if self.configuration.dryRun {
                 statusCode = 0
             } else {
-                statusCode = Process.execute(command: command)
+                let invocation = task.invocation
+                statusCode = Process.execute(command: invocation)
             }
         }
-        print("Program ended with success.\n".lightGreen)
-        guard statusCode == 0 else {
-            let error = Error(statusCode: statusCode)
-            print("Program ended with error: \(error.description.onRed).\n".lightRed)
-            throw error
+        let result: TaskResult
+        switch statusCode {
+        case 0:
+            result = .success
+        case _:
+            result = .failure(TaskError(statusCode: statusCode))
         }
+        let report = TaskReport(task: task, result: result)
+        self.broadcast(event: .exitedTask(report))
+        return report
     }
 
     private func delay() {
         sleep(1)
+    }
+
+    private func broadcast(event: Event) {
+        for observer in self.observers {
+            observer.observe(event: event)
+        }
     }
 }

@@ -21,7 +21,7 @@ This is early work in progress. Stay tuned!
 - [ ] Console clearing
 - [ ] Lazy mode
 - [ ] Delayed runs
-- [ ] Quiet mode
+- [x] Quiet mode
 - [x] Dry-run mode
 - [ ] Ignore patterns
 - [ ] Watch patterns

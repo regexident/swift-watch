@@ -16,7 +16,7 @@ class Watcher {
     let configuration: Configuration
     private var state: State = .stopped
     private var skipped: Bool = false
-    private var closure: ((QueueWatcherChange, URL) throws -> ())?
+    private var closure: ((QueueWatcherChange, URL) -> ())?
     private var semaphore: DispatchSemaphore = .init(value: 0)
     private var queueWatcher: QueueWatcher?
 
@@ -51,12 +51,7 @@ extension Watcher: QueueWatcherDelegate {
             self.state = .stopped
             self.semaphore.signal()
         }
-        do {
-            try closure(change, directoryURL)
-            print("Finished running with success.".lightGreen)
-        } catch {
-            print("Finished running with failure.".lightRed)
-        }
+        closure(change, directoryURL)
     }
 }
 
