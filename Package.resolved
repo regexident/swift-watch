@@ -21,11 +21,11 @@
       },
       {
         "package": "Rainbow",
-        "repositoryURL": "https://github.com/onevcat/Rainbow",
+        "repositoryURL": "https://github.com/regexident/Rainbow",
         "state": {
-          "branch": null,
-          "revision": "5d5e3d3facd3a46edc260c383f15261b07abcf98",
-          "version": "3.0.1"
+          "branch": "manifest",
+          "revision": "c63d7104ba9f3f4d3d9032057b421eaf5f7be282",
+          "version": null
         }
       },
       {
