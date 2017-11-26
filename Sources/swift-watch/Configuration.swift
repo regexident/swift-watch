@@ -7,11 +7,16 @@ import Foundation
 import CommandCougar
 
 struct Configuration {
+    let clear: Bool
     let dryRun: Bool
     let quiet: Bool
     let monochrome: Bool
     let tasks: [Task]
 
+    static let clearOption = Option(
+        flag: .both(short: "c", long: "clear"),
+        overview: "Clear output before each execution"
+    )
     static let dryRunOption = Option(
         flag: .both(short: "d", long: "dry-run"),
         overview: "Do not run any commands, just print them"
@@ -39,6 +44,8 @@ struct Configuration {
 extension Configuration {
     init(evaluation: CommandEvaluation) throws {
         let options = evaluation.options
+
+        let clear = options.contains { $0.flag == Configuration.clearOption.flag }
         let dryRun = options.contains { $0.flag == Configuration.dryRunOption.flag }
         let quiet = options.contains { $0.flag == Configuration.quietOption.flag }
         let monochrome = options.contains { $0.flag == Configuration.monochromeOption.flag }
@@ -56,6 +63,7 @@ extension Configuration {
             }
         }
         self.init(
+            clear: clear,
             dryRun: dryRun,
             quiet: quiet,
             monochrome: monochrome,
