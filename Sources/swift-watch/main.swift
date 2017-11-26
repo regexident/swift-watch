@@ -11,11 +11,13 @@ var watchCommand = Command(
     overview: """
 Watches over your Swift project's source
 
-Swift commands (-x) are always executed before shell commands (-s).
+Tasks (-x & -s) are executed in the order they appear.
 """,
     callback: nil,
     options: [
         Configuration.dryRunOption,
+        Configuration.quietOption,
+        Configuration.monochromeOption,
         Configuration.swiftOption,
         Configuration.shellOption,
     ],
@@ -38,7 +40,15 @@ do {
 let directoryPath: String = FileManager.default.currentDirectoryPath
 let directoryURL: URL = URL(fileURLWithPath: directoryPath)
 
-let loop = MainLoop(directoryURL: directoryURL, configuration: configuration)
+let observers: [RunnerObserver] = [
+    Logger(configuration: configuration)
+]
+
+let loop = MainLoop(
+    directoryURL: directoryURL,
+    configuration: configuration,
+    observers: observers
+)
 
 do {
     try loop.start()
