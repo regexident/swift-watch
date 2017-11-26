@@ -15,9 +15,9 @@ class MainLoop {
 
     func start() throws {
         print()
-        self.runner.run()
+        try? self.runner.run()
         self.watcher.watch { change, directoryURL in
-            self.runner.run()
+            try? self.runner.run()
         }
     }
 }
