@@ -11,8 +11,15 @@ class Runner {
     let configuration: Configuration
     private let queue: DispatchQueue = .init(label: "swift-watch")
     private var running: Bool = false
-
     let observers: [RunnerObserver]
+
+    private var isDryRun: Bool {
+        return self.configuration.dryRun
+    }
+
+    private var isClearing: Bool {
+        return self.configuration.clear
+    }
 
     init(directoryURL: URL, configuration: Configuration, observers: [RunnerObserver]) {
         self.directoryURL = directoryURL
@@ -23,8 +30,11 @@ class Runner {
     func run(taskSuite: TaskSuite) -> TaskSuiteReport {
         self.running = true
         defer { self.running = false }
-        var report = TaskSuiteReport(taskSuite: taskSuite, result: .success)
+        if self.isClearing {
+            Process.execute(command: "clear")
+        }
         self.broadcast(event: .enteredTaskSuite(taskSuite))
+        var report = TaskSuiteReport(taskSuite: taskSuite, result: .success)
         for task in taskSuite.tasks {
             let taskResult = self.run(task: task).result
             if case .failure(_) = taskResult {
@@ -41,7 +51,7 @@ class Runner {
         var statusCode: Int32 = 0
         self.broadcast(event: .enteredTask(task))
         self.queue.sync {
-            if self.configuration.dryRun {
+            if self.isDryRun {
                 statusCode = 0
             } else {
                 let invocation = task.invocation

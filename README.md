@@ -18,7 +18,7 @@ This is early work in progress. Stay tuned!
 - [x] Swift commands
 - [x] Shell commands
 - [x] Colorful output
-- [ ] Console clearing
+- [x] Console clearing
 - [ ] Lazy mode
 - [ ] Delayed runs
 - [x] Quiet mode

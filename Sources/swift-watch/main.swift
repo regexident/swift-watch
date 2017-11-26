@@ -15,6 +15,7 @@ Tasks (-x & -s) are executed in the order they appear.
 """,
     callback: nil,
     options: [
+        Configuration.clearOption,
         Configuration.dryRunOption,
         Configuration.quietOption,
         Configuration.monochromeOption,
