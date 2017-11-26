@@ -15,6 +15,7 @@ Swift commands (-x) are always executed before shell commands (-s).
 """,
     callback: nil,
     options: [
+        Configuration.dryRunOption,
         Configuration.swiftOption,
         Configuration.shellOption,
     ],

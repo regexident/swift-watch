@@ -9,7 +9,6 @@ extension Process {
     static func execute(command: String) -> Int32 {
         let process = Process()
         process.launchPath = "/usr/bin/env"
-        print("Command: \(command)\n")
         process.arguments = ["-S", command]
         process.launch()
         process.waitUntilExit()
@@ -20,7 +19,6 @@ extension Process {
     static func execute(command: [String]) -> Int32 {
         let process = Process()
         process.launchPath = "/usr/bin/env"
-        print("Command: '\(command)'\n")
         process.arguments = command
         process.launch()
         process.waitUntilExit()

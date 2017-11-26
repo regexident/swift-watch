@@ -19,23 +19,35 @@ class Runner {
         self.running = true
         defer { self.running = false }
         for command in self.configuration.swiftCommands {
+            let command = "swift " + command
+            print("Running program: $ \(command).\n")
             var statusCode: Int32 = 0
             self.queue.sync {
-                statusCode = Process.execute(command: "swift " + command)
+                if self.configuration.dryRun {
+                    statusCode = 0
+                } else {
+                    statusCode = Process.execute(command: command)
+                }
             }
+            print("Program ended with exit code: \(statusCode)\n")
             guard statusCode == 0 else {
-                print("\nProgram ended with exit code: \(statusCode)\n")
                 return
             }
             self.delay()
         }
         for command in self.configuration.shellCommands {
+            let command = command
+            print("Running program: $ \(command).\n")
             var statusCode: Int32 = 0
             self.queue.sync {
-                statusCode = Process.execute(command: command)
+                if self.configuration.dryRun {
+                    statusCode = 0
+                } else {
+                    statusCode = Process.execute(command: command)
+                }
             }
+            print("Program ended with exit code: \(statusCode)\n")
             guard statusCode == 0 else {
-                print("\nProgram ended with exit code: \(statusCode)\n")
                 return
             }
             self.delay()

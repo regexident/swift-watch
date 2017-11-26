@@ -21,7 +21,7 @@ This is early work in progress. Stay tuned!
 - [ ] Lazy mode
 - [ ] Delayed runs
 - [ ] Quiet mode
-- [ ] Dry-run mode
+- [x] Dry-run mode
 - [ ] Ignore patterns
 - [ ] Watch patterns
 

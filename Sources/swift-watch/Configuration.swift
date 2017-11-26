@@ -7,9 +7,14 @@ import Foundation
 import CommandCougar
 
 struct Configuration {
+    let dryRun: Bool
     let swiftCommands: [String]
     let shellCommands: [String]
 
+    static let dryRunOption = Option(
+        flag: .both(short: "d", long: "dry-run"),
+        overview: "Do not run any commands, just print them"
+    )
     static let swiftOption = Option(
         flag: .both(short: "x", long: "exec"),
         overview: "Swift command(s) to execute on changes",
@@ -26,10 +31,12 @@ extension Configuration {
     init(evaluation: CommandEvaluation) throws {
         let options = evaluation.options
 
+        let dryRun = options.contains { $0.flag == Configuration.dryRunOption.flag }
         let swiftCommands = options.filter { $0.flag == Configuration.swiftOption.flag }.flatMap { $0.parameter }
         let shellCommands = options.filter { $0.flag == Configuration.shellOption.flag }.flatMap { $0.parameter }
 
         self.init(
+            dryRun: dryRun,
             swiftCommands: swiftCommands,
             shellCommands: shellCommands
         )
