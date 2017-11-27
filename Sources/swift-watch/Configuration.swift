@@ -10,6 +10,7 @@ struct Configuration {
     let clear: Bool
     let dryRun: Bool
     let quiet: Bool
+    let postpone: Bool
     let monochrome: Bool
     let tasks: [Task]
 
@@ -24,6 +25,10 @@ struct Configuration {
     static let quietOption = Option(
         flag: .both(short: "q", long: "quiet"),
         overview: "Suppress output from swift-watch itself"
+    )
+    static let postponeOption = Option(
+        flag: .both(short: "p", long: "postpone"),
+        overview: "Postpone initial execution until the first change"
     )
     static let monochromeOption = Option(
         flag: .both(short: "m", long: "monochrome"),
@@ -48,6 +53,7 @@ extension Configuration {
         let clear = options.contains { $0.flag == Configuration.clearOption.flag }
         let dryRun = options.contains { $0.flag == Configuration.dryRunOption.flag }
         let quiet = options.contains { $0.flag == Configuration.quietOption.flag }
+        let postpone = options.contains { $0.flag == Configuration.postponeOption.flag }
         let monochrome = options.contains { $0.flag == Configuration.monochromeOption.flag }
         let tasks: [Task] = options.flatMap {
             guard case let (flag, parameter?) = ($0.flag, $0.parameter) else {
@@ -66,6 +72,7 @@ extension Configuration {
             clear: clear,
             dryRun: dryRun,
             quiet: quiet,
+            postpone: postpone,
             monochrome: monochrome,
             tasks: tasks
         )

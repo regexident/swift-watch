@@ -18,6 +18,7 @@ Tasks (-x & -s) are executed in the order they appear.
         Configuration.clearOption,
         Configuration.dryRunOption,
         Configuration.quietOption,
+        Configuration.postponeOption,
         Configuration.monochromeOption,
         Configuration.swiftOption,
         Configuration.shellOption,

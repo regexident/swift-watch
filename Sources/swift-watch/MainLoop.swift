@@ -8,6 +8,11 @@ class MainLoop {
     let watcher: Watcher
     let runner: Runner
     let taskSuite: TaskSuite
+    let configuration: Configuration
+
+    private var shouldPostpone: Bool {
+        return self.configuration.postpone
+    }
 
     init(directoryURL: URL, configuration: Configuration, observers: [RunnerObserver]) {
         self.watcher = Watcher(
@@ -22,10 +27,13 @@ class MainLoop {
         self.taskSuite = TaskSuite(
             configuration: configuration
         )
+        self.configuration = configuration
     }
 
     func start() throws {
-        let _ = self.runner.run(taskSuite: self.taskSuite)
+        if !self.shouldPostpone {
+            let _ = self.runner.run(taskSuite: self.taskSuite)
+        }
         self.watcher.watch { change, directoryURL in
             let _ = self.runner.run(taskSuite: self.taskSuite)
         }
