@@ -15,6 +15,10 @@ class Logger {
         return self.configuration.quiet
     }
 
+    fileprivate var prefix: String {
+        return "swift-watch: "
+    }
+
     required init(configuration: Configuration) {
         self.configuration = configuration
     }
@@ -40,7 +44,8 @@ extension Logger {
         guard !self.quiet else {
             return // quiet mode
         }
-        let messageString = "\nEntering tasks...\n"
+        print("\n" + self.prefix, terminator: "")
+        let messageString = "Entering tasks...\n"
         let styledMessageString = self.colored ? messageString.lightBlue : messageString
         print(styledMessageString)
     }
@@ -49,6 +54,7 @@ extension Logger {
         guard !self.quiet else {
             return // quiet mode
         }
+        print(self.prefix, terminator: "")
         let taskCount = report.reports.count
         let failure = report.reports.first { !$0.result.isSuccess }.map { $0.result }
         switch failure {
@@ -71,6 +77,7 @@ extension Logger {
         guard !self.quiet else {
             return // quiet mode
         }
+        print(self.prefix, terminator: "")
         let commandString = task.invocation
         let styledCommandString = self.colored ? commandString.onBlue : commandString
         let messageString = "Entering task: $ \(styledCommandString).\n"
@@ -82,15 +89,16 @@ extension Logger {
         guard !self.quiet else {
             return // quiet mode
         }
+        print("\n" + self.prefix, terminator: "")
         switch report.result {
         case .success:
-            let messageString = "\nExited task with success.\n"
+            let messageString = "Exited task with success.\n"
             let styledMessageString = self.colored ? messageString.lightGreen : messageString
             print(styledMessageString)
         case .failure(let error):
             let failureString = error.description
             let styledFailureString = self.colored ? failureString.onRed : failureString
-            let messageString = "\nExited task with error: \(styledFailureString).\n"
+            let messageString = "Exited task with error: \(styledFailureString).\n"
             let styledMessageString = self.colored ? messageString.lightRed : messageString
             print(styledMessageString)
         }
