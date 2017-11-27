@@ -31,29 +31,31 @@ let configuration: Configuration
 do {
     let arguments = CommandLine.arguments
     let evaluation = try watchCommand.evaluate(arguments: arguments)
-    configuration = try Configuration(evaluation: evaluation)
+
+    guard evaluation.options[Option.help.flag] == nil else {
+        exit(0)
+    }
+
+    let directoryPath: String = FileManager.default.currentDirectoryPath
+    let directoryURL: URL = URL(fileURLWithPath: directoryPath)
+
+    configuration = try Configuration(evaluation: evaluation, directoryURL: directoryURL)
 } catch {
-    print("ERROR: \(error)")
-    print()
+    print("ERROR: \(error)\n")
     print(watchCommand.help())
     exit(0)
 }
-
-let directoryPath: String = FileManager.default.currentDirectoryPath
-let directoryURL: URL = URL(fileURLWithPath: directoryPath)
 
 let observers: [RunnerObserver] = [
     Logger(configuration: configuration)
 ]
 
-let loop = MainLoop(
-    directoryURL: directoryURL,
-    configuration: configuration,
-    observers: observers
-)
+let loop = MainLoop(configuration: configuration, observers: observers)
 
 do {
     try loop.start()
 } catch let error {
     print("ERROR: \(error)")
 }
+
+RunLoop.main.run()

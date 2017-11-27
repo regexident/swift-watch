@@ -14,28 +14,21 @@ class MainLoop {
         return self.configuration.postpone
     }
 
-    init(directoryURL: URL, configuration: Configuration, observers: [RunnerObserver]) {
-        self.watcher = Watcher(
-            directoryURL: directoryURL,
-            configuration: configuration
-        )
-        self.runner = Runner(
-            directoryURL: directoryURL,
-            configuration: configuration,
-            observers: observers
-        )
-        self.taskSuite = TaskSuite(
-            configuration: configuration
-        )
+    init(configuration: Configuration, observers: [RunnerObserver]) {
+        let runner = Runner(configuration: configuration, observers: observers)
+        let taskSuite = TaskSuite(configuration: configuration)
+        self.watcher = Watcher(configuration: configuration) { changedURL in
+            runner.run(taskSuite: taskSuite)
+        }
+        self.runner = runner
+        self.taskSuite = taskSuite
         self.configuration = configuration
     }
 
     func start() throws {
         if !self.shouldPostpone {
-            let _ = self.runner.run(taskSuite: self.taskSuite)
+            self.runner.run(taskSuite: self.taskSuite)
         }
-        self.watcher.watch { change, directoryURL in
-            let _ = self.runner.run(taskSuite: self.taskSuite)
-        }
+        self.watcher.startWatching()
     }
 }

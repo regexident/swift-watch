@@ -12,7 +12,9 @@ struct Configuration {
     let quiet: Bool
     let postpone: Bool
     let monochrome: Bool
+
     let tasks: [Task]
+    let directoryURL: URL
 
     static let clearOption = Option(
         flag: .both(short: "c", long: "clear"),
@@ -47,7 +49,7 @@ struct Configuration {
 }
 
 extension Configuration {
-    init(evaluation: CommandEvaluation) throws {
+    init(evaluation: CommandEvaluation, directoryURL: URL) throws {
         let options = evaluation.options
 
         let clear = options.contains { $0.flag == Configuration.clearOption.flag }
@@ -74,7 +76,8 @@ extension Configuration {
             quiet: quiet,
             postpone: postpone,
             monochrome: monochrome,
-            tasks: tasks
+            tasks: tasks,
+            directoryURL: directoryURL
         )
     }
 }

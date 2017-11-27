@@ -7,11 +7,11 @@ import Foundation
 import Rainbow
 
 class Runner {
-    let directoryURL: URL
     let configuration: Configuration
     private let queue: DispatchQueue = .init(label: "swift-watch")
-    private var running: Bool = false
     let observers: [RunnerObserver]
+    var workItem: DispatchWorkItem?
+    var currentTime: UInt = 0
 
     private var isDryRun: Bool {
         return self.configuration.dryRun
@@ -21,42 +21,57 @@ class Runner {
         return self.configuration.clear
     }
 
-    init(directoryURL: URL, configuration: Configuration, observers: [RunnerObserver]) {
-        self.directoryURL = directoryURL
+    init(configuration: Configuration, observers: [RunnerObserver]) {
         self.configuration = configuration
         self.observers = observers
     }
 
-    func run(taskSuite: TaskSuite) -> TaskSuiteReport {
-        self.running = true
-        defer { self.running = false }
-        if self.isClearing {
-            Process.execute(command: "clear")
+    func run(taskSuite: TaskSuite) {
+        self.currentTime += 1
+        let scheduleTime = self.currentTime
+        if let workItem = self.workItem {
+            workItem.cancel()
+            self.workItem = nil
         }
-        self.broadcast(event: .enteredTaskSuite(taskSuite))
-        var report = TaskSuiteReport(taskSuite: taskSuite, result: .success)
-        for task in taskSuite.tasks {
-            let taskResult = self.run(task: task).result
-            if case .failure(_) = taskResult {
-                report = TaskSuiteReport(taskSuite: taskSuite, result: taskResult)
-                break
+        let workItem = DispatchWorkItem {
+            defer { self.workItem = nil }
+            if self.isClearing {
+                Process.execute(command: "clear")
             }
-            self.delay()
+            self.broadcast(event: .enteredTaskSuite(taskSuite))
+
+            var taskReports: [TaskReport] = []
+            for task in taskSuite.tasks {
+                guard scheduleTime == self.currentTime else {
+                    break
+                }
+                let result = self.run(task: task).result
+                let report = TaskReport(task: task, result: result)
+                taskReports.append(report)
+                guard result.isSuccess else {
+                    break
+                }
+                self.delay()
+            }
+            let report = TaskSuiteReport(reports: taskReports)
+            self.broadcast(event: .exitedTaskSuite(report))
         }
-        self.broadcast(event: .exitedTaskSuite(report))
-        return report
+        self.workItem = workItem
+        self.queue.asyncAfter(
+            deadline: .now() + .seconds(1),
+            execute: workItem
+        )
     }
 
     private func run(task: Task) -> TaskReport {
+        let report: TaskReport
         var statusCode: Int32 = 0
         self.broadcast(event: .enteredTask(task))
-        self.queue.sync {
-            if self.isDryRun {
-                statusCode = 0
-            } else {
-                let invocation = task.invocation
-                statusCode = Process.execute(command: invocation)
-            }
+        if self.isDryRun {
+            statusCode = 0
+        } else {
+            let invocation = task.invocation
+            statusCode = Process.execute(command: invocation)
         }
         let result: TaskResult
         switch statusCode {
@@ -65,13 +80,13 @@ class Runner {
         case _:
             result = .failure(TaskError(statusCode: statusCode))
         }
-        let report = TaskReport(task: task, result: result)
+        report = TaskReport(task: task, result: result)
         self.broadcast(event: .exitedTask(report))
         return report
     }
 
     private func delay() {
-        sleep(1)
+        usleep(500_000) // 0.5 sec
     }
 
     private func broadcast(event: Event) {
