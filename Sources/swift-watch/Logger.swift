@@ -11,8 +11,8 @@ class Logger {
         return !self.configuration.monochrome
     }
 
-    fileprivate var silenced: Bool {
-        return !self.configuration.quiet
+    fileprivate var quiet: Bool {
+        return self.configuration.quiet
     }
 
     required init(configuration: Configuration) {
@@ -37,7 +37,7 @@ extension Logger: RunnerObserver {
 
 extension Logger {
     private func entered(taskStuite: TaskSuite) {
-        guard !self.silenced else {
+        guard !self.quiet else {
             return // quiet mode
         }
         let messageString = "Entering tasks...\n"
@@ -46,7 +46,7 @@ extension Logger {
     }
 
     private func exited(taskStuite report: TaskSuiteReport) {
-        guard !self.silenced else {
+        guard !self.quiet else {
             return // quiet mode
         }
         let taskCount = report.taskSuite.tasks.count
@@ -67,7 +67,7 @@ extension Logger {
     }
 
     private func entered(task: Task) {
-        guard !self.silenced else {
+        guard !self.quiet else {
             return // quiet mode
         }
         let commandString = task.invocation
@@ -78,7 +78,7 @@ extension Logger {
     }
 
     private func exited(task report: TaskReport) {
-        guard !self.silenced else {
+        guard !self.quiet else {
             return // quiet mode
         }
         switch report.result {
