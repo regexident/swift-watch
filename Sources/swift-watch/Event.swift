@@ -15,6 +15,13 @@ struct TaskError: Swift.Error, CustomStringConvertible {
 enum TaskResult {
     case success
     case failure(TaskError)
+
+    var isSuccess: Bool {
+        switch self {
+        case .success: return true
+        case .failure(_): return false
+        }
+    }
 }
 
 struct TaskSuite {
@@ -28,8 +35,7 @@ struct TaskSuite {
 struct TaskSuiteReport {
     typealias Result = TaskResult
 
-    let taskSuite: TaskSuite
-    let result: Result
+    let reports: [TaskReport]
 }
 
 enum Task {
