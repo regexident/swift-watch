@@ -60,14 +60,12 @@ extension Logger {
         switch failure {
         case .some(.success), .none:
             let successString = "success"
-            let styledSuccessString = self.colored ? successString.onGreen : successString
-            let messageString = "Exited \(taskCount) tasks with \(styledSuccessString).\n"
+            let messageString = "Exited \(taskCount) tasks with \(successString).\n"
             let styledMessageString = self.colored ? messageString.lightGreen : messageString
             print(styledMessageString)
         case .some(.failure(let error)):
             let failureString = error.description
-            let styledFailureString = self.colored ? failureString.onRed : failureString
-            let messageString = "Exited \(taskCount) tasks with error: \(styledFailureString).\n"
+            let messageString = "Exited \(taskCount) tasks with error: \(failureString).\n"
             let styledMessageString = self.colored ? messageString.lightRed : messageString
             print(styledMessageString)
         }
@@ -79,8 +77,7 @@ extension Logger {
         }
         print(self.prefix, terminator: "")
         let commandString = task.invocation
-        let styledCommandString = self.colored ? commandString.onBlue : commandString
-        let messageString = "Entering task: $ \(styledCommandString).\n"
+        let messageString = "Entering task: $ \(commandString).\n"
         let styledMessageString = self.colored ? messageString.lightBlue : messageString
         print(styledMessageString)
     }
@@ -97,8 +94,7 @@ extension Logger {
             print(styledMessageString)
         case .failure(let error):
             let failureString = error.description
-            let styledFailureString = self.colored ? failureString.onRed : failureString
-            let messageString = "Exited task with error: \(styledFailureString).\n"
+            let messageString = "Exited task with error: \(failureString).\n"
             let styledMessageString = self.colored ? messageString.lightRed : messageString
             print(styledMessageString)
         }
