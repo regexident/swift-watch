@@ -1,5 +1,5 @@
 # reference: http://www.objc.io/issue-6/travis-ci.html
-osx_image: xcode9
+osx_image: xcode10
 
 language: swift
 
@@ -10,9 +10,12 @@ before_install:
  - sudo gem install xcpretty-travis-formatter
 
 install:
-- eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
+ - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
 
 script:
+ - swift --version
  - swift build
  - swift package generate-xcodeproj
+
+ - xcodebuild -version
  - xcodebuild build -project swift-watch.xcodeproj -scheme swift-watch -sdk macosx | xcpretty -c && exit ${PIPESTATUS[0]}
