@@ -57,7 +57,7 @@ extension Configuration {
         let quiet = options.contains { $0.flag == Configuration.quietOption.flag }
         let postpone = options.contains { $0.flag == Configuration.postponeOption.flag }
         let monochrome = options.contains { $0.flag == Configuration.monochromeOption.flag }
-        let tasks: [Task] = options.flatMap {
+        let tasks: [Task] = options.compactMap {
             guard case let (flag, parameter?) = ($0.flag, $0.parameter) else {
                 return nil
             }
