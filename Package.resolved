@@ -3,20 +3,20 @@
     "pins": [
       {
         "package": "CommandCougar",
-        "repositoryURL": "https://github.com/surfandneptune/CommandCougar.git",
+        "repositoryURL": "https://github.com/surfandneptune/CommandCougar",
         "state": {
           "branch": null,
-          "revision": "fdfbece9249903ebd57c3920305f8944a045dd34",
-          "version": "1.0.8"
+          "revision": "33b0211120d2a4bd41c683516ec78cecc7c614cc",
+          "version": "1.1.1"
         }
       },
       {
         "package": "Files",
-        "repositoryURL": "https://github.com/JohnSundell/Files.git",
+        "repositoryURL": "https://github.com/JohnSundell/Files",
         "state": {
           "branch": null,
-          "revision": "6171f9e9d8619678da22355560f3dbed6368058d",
-          "version": "2.0.1"
+          "revision": "92b57bea0e737e7d92b5ff281f46ec2b59faf91c",
+          "version": "3.1.0"
         }
       },
       {
@@ -24,17 +24,17 @@
         "repositoryURL": "https://github.com/onevcat/Rainbow",
         "state": {
           "branch": null,
-          "revision": "f407235c7e473c3cb2d2907bb6822616d22a0b78",
-          "version": "3.0.3"
+          "revision": "9c52c1952e9b2305d4507cf473392ac2d7c9b155",
+          "version": "3.1.5"
         }
       },
       {
         "package": "SKQueue",
-        "repositoryURL": "https://github.com/daniel-pedersen/SKQueue.git",
+        "repositoryURL": "https://github.com/daniel-pedersen/SKQueue",
         "state": {
           "branch": null,
-          "revision": "b6dcd7532f90b0c3abbe624d271f64ac7f393ddf",
-          "version": "1.1.0"
+          "revision": "a52c15ea2a8f28fde607155cf75c1abe9ea000a7",
+          "version": "1.2.0"
         }
       }
     ]
