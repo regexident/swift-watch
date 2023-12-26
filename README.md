@@ -15,7 +15,7 @@ Watches over your Swift project's source.
 2. Install in `$PATH` (such as in `/usr/local/bin/`):
 
    ```terminal
-   install --mode +x "./.build/release/swift-watch" "/usr/local/bin/"
+   install -m +x "./.build/release/swift-watch" "/usr/local/bin/"
    ```
 
 ## Usage
