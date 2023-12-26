@@ -2,21 +2,32 @@
 
 Watches over your Swift project's source.
 
-# Installation
+## Installation
 
 1. Build
-2. Install in `$PATH` (such as in `/usr/local/bin/`)
 
-# Usage
+   ```terminal
+   git clone https://github.com/regexident/swift-watch.git
+   cd ./swift-watch
+   swift build -c release
+   ```
+
+2. Install in `$PATH` (such as in `/usr/local/bin/`):
+
+   ```terminal
+   install --mode +x "./.build/release/swift-watch" "/usr/local/bin/"
+   ```
+
+## Usage
 
 1. Run `$ cd /path/to/swift/package/`
 2. Run `$ swift watch -x="build"`
 3. Modify some files in `$ cd /path/to/swift/package/`
-4. Watch swift-watch do its thing
+4. Watch `swift-watch` do its thing
 
-# Options
+## Options
 
-```
+```terminal
 OVERVIEW: Watches over your Swift project's source
 
 Tasks (-x & -s) are executed in the order they appear.
@@ -34,7 +45,7 @@ OPTIONS:
    -h, --help                    The help menu
 ```
 
-# Roadmap
+## Roadmap
 
 - [x] Swift commands
 - [x] Shell commands
@@ -47,6 +58,6 @@ OPTIONS:
 - [ ] Ignore patterns
 - [ ] Watch patterns
 
-# Shout-out
+## Shout-out
 
 *swift-watch* was directly inspired by Rust's [*cargo-watch*](https://github.com/passcod/cargo-watch). 🙌🏻
