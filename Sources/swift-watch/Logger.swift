@@ -28,9 +28,9 @@ extension Logger: RunnerObserver {
     func observe(event: Event) {
         switch event {
         case .enteredTaskSuite(let taskSuite):
-            self.entered(taskStuite: taskSuite)
+            self.entered(taskSuite: taskSuite)
         case .exitedTaskSuite(let report):
-            self.exited(taskStuite: report)
+            self.exited(taskSuite: report)
         case .enteredTask(let task):
             self.entered(task: task)
         case .exitedTask(let report):
@@ -40,7 +40,7 @@ extension Logger: RunnerObserver {
 }
 
 extension Logger {
-    private func entered(taskStuite: TaskSuite) {
+    private func entered(taskSuite: TaskSuite) {
         guard !self.quiet else {
             return // quiet mode
         }
@@ -50,7 +50,7 @@ extension Logger {
         print(styledMessageString)
     }
 
-    private func exited(taskStuite report: TaskSuiteReport) {
+    private func exited(taskSuite report: TaskSuiteReport) {
         guard !self.quiet else {
             return // quiet mode
         }
