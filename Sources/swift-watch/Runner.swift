@@ -64,9 +64,8 @@ class Runner {
     }
 
     private func run(task: Task) -> TaskReport {
-        let report: TaskReport
-        var statusCode: Int32 = 0
         self.broadcast(event: .enteredTask(task))
+        var statusCode: Int32 = 0
         if self.isDryRun {
             statusCode = 0
         } else {
@@ -80,7 +79,7 @@ class Runner {
         case _:
             result = .failure(TaskError(statusCode: statusCode))
         }
-        report = TaskReport(task: task, result: result)
+        let report = TaskReport(task: task, result: result)
         self.broadcast(event: .exitedTask(report))
         return report
     }
