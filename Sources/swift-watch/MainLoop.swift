@@ -18,7 +18,7 @@ class MainLoop {
         let runner = Runner(configuration: configuration, observers: observers)
         let taskSuite = TaskSuite(configuration: configuration)
         self.watcher = Watcher(configuration: configuration) { changedURL in
-            runner.run(taskSuite: taskSuite, changedURL: changedURL)
+            runner.schedule(taskSuite: taskSuite, changedURL: changedURL)
         }
         self.runner = runner
         self.taskSuite = taskSuite
@@ -27,7 +27,7 @@ class MainLoop {
 
     func start() throws {
         if !self.shouldPostpone {
-            self.runner.run(taskSuite: self.taskSuite, changedURL: nil)
+            self.runner.schedule(taskSuite: self.taskSuite, changedURL: nil)
         }
         self.watcher.startWatching()
     }

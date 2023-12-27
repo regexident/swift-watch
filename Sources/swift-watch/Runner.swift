@@ -26,7 +26,7 @@ class Runner {
         self.observers = observers
     }
 
-    func run(taskSuite: TaskSuite, changedURL: URL?) {
+    func schedule(taskSuite: TaskSuite, changedURL: URL?) {
         self.currentTime += 1
         let scheduleTime = self.currentTime
         if let workItem = self.workItem {
