@@ -17,7 +17,7 @@ class Runner {
         return self.configuration.dryRun
     }
 
-    private var isClearing: Bool {
+    private var shouldClear: Bool {
         return self.configuration.clear
     }
 
@@ -35,7 +35,7 @@ class Runner {
         }
         let workItem = DispatchWorkItem {
             defer { self.workItem = nil }
-            if self.isClearing {
+            if self.shouldClear {
                 Process.execute(command: "clear")
             }
             self.broadcast(event: .enteredTaskSuite(taskSuite))
